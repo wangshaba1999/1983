@@ -292,7 +292,32 @@
             }
         }
 
+        // 解析網址參數 ?unit=1號機 帶入機組欄位
+        function getUnitParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let unit = urlParams.get('unit');
+            if (unit) {
+                unit = decodeURIComponent(unit);
+                // 自動將 "1號機" 或 "1" 轉為 "#1機" 格式
+                const match = unit.match(/(\d+)/);
+                if (match) {
+                    return `#${match[1]}機`;
+                }
+                return unit;
+            }
+            return "";
+        }
+
         window.onload = function() {
+            // 帶入網址傳遞的機組資訊
+            const defaultUnit = getUnitParam();
+            if (defaultUnit) {
+                const unitInput = document.getElementById('unit');
+                const unitTxt = document.getElementById('txt-unit');
+                if (unitInput) unitInput.value = defaultUnit;
+                if (unitTxt) unitTxt.innerText = defaultUnit;
+            }
+
             const today = new Date().toISOString().split('T')[0];
             const tbody = document.getElementById('tableBody');
             const durationOptions = generateDurationOptions();

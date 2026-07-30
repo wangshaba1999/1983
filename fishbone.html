@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工程施工進度魚骨圖</title>
+    <title id="page-title">工程施工進度魚骨圖</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -59,7 +59,7 @@
                     <i class="fa-solid fa-fish-fins text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg md:text-xl font-bold text-slate-100 flex items-center gap-2">
+                    <h1 id="header-title" class="text-lg md:text-xl font-bold text-slate-100 flex items-center gap-2">
                         工程施工進度魚骨圖
                     </h1>
                     <p class="text-xs text-slate-400">點擊卡片可編輯細節或更換現場照片，系統將自動依「日期 + 時間」進行排序</p>
@@ -261,6 +261,23 @@
     </footer>
 
     <script>
+        let currentMachineName = "全套管"; // 預設名稱
+
+        // 解析網址參數 ?unit=3號機
+        function getUnitParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let unit = urlParams.get('unit');
+            if (unit) {
+                unit = decodeURIComponent(unit);
+                const match = unit.match(/(\d+)/);
+                if (match) {
+                    return `#${match[1]}機`;
+                }
+                return unit;
+            }
+            return "";
+        }
+
         // 安全無污染 SVG 佔位圖生成器
         function createSvgPlaceholder(title, timeDisplay, colorHex) {
             const displayTitle = (title || '未點擊填寫項目').replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -316,7 +333,8 @@
         }
 
         function loadNodesData() {
-            const saved = localStorage.getItem('fishbone_nodes_clean_v6');
+            const cacheKey = `fishbone_nodes_${currentMachineName}`;
+            const saved = localStorage.getItem(cacheKey);
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -330,10 +348,11 @@
 
         function saveNodesDataToCache() {
             nodesData = sortNodesByDateTime(nodesData);
-            localStorage.setItem('fishbone_nodes_clean_v6', JSON.stringify(nodesData));
+            const cacheKey = `fishbone_nodes_${currentMachineName}`;
+            localStorage.setItem(cacheKey, JSON.stringify(nodesData));
         }
 
-        let nodesData = loadNodesData();
+        let nodesData = [];
         let imageCache = {};
         let cardHitBoxes = [];
         let uploadedImageBase64 = null;
@@ -341,6 +360,15 @@
         let pendingConfirmAction = null;
 
         window.onload = function() {
+            const unitParam = getUnitParam();
+            if (unitParam) {
+                currentMachineName = unitParam;
+                const fullTitle = `${unitParam}全套管施工進度與現場處置時間軸魚骨圖`;
+                document.getElementById('header-title').innerText = fullTitle;
+                document.getElementById('page-title').innerText = fullTitle;
+            }
+
+            nodesData = loadNodesData();
             initCanvas();
             renderManagementList();
         };
@@ -425,7 +453,8 @@
 
             ctx.fillStyle = '#fbbf24';
             ctx.font = `bold 22px ${fontStack}`;
-            ctx.fillText('施工進度與現場處置時間軸魚骨圖', 40, 45);
+            const canvasMainTitle = `${currentMachineName}${currentMachineName.includes("全套管") ? "" : "全套管"}施工進度與現場處置時間軸魚骨圖`;
+            ctx.fillText(canvasMainTitle, 40, 45);
 
             ctx.fillStyle = '#94a3b8';
             ctx.font = `13px ${fontStack}`;
@@ -433,7 +462,9 @@
             const validNodes = nodesData.filter(n => n.date || n.time);
             const startTimeStr = validNodes.length > 0 ? formatDisplayTime(validNodes[0]) : '--/-- --:--';
             const endTimeStr = validNodes.length > 0 ? formatDisplayTime(validNodes[validNodes.length - 1]) : '--/-- --:--';
-            ctx.fillText(`時間區間：${startTimeStr} ~ ${endTimeStr} | 總節點數：${nodesData.length}`, 420, 43);
+            
+            const titleWidth = ctx.measureText(canvasMainTitle).width;
+            ctx.fillText(`時間區間：${startTimeStr} ~ ${endTimeStr} | 總節點數：${nodesData.length}`, 60 + titleWidth, 43);
 
             const spineY = h / 2;
             const startX = 80;
@@ -892,7 +923,8 @@
 
         function resetDefaultData() {
             showConfirmDialog('重置為空白版', '確定要重置並清空所有內容嗎？（您自行輸入的內容將會被重置）', function() {
-                localStorage.removeItem('fishbone_nodes_clean_v6');
+                const cacheKey = `fishbone_nodes_${currentMachineName}`;
+                localStorage.removeItem(cacheKey);
                 nodesData = getDefaultData();
                 imageCache = {};
                 initCanvas();
@@ -909,7 +941,7 @@
                 // 1. 嘗試直接導出 DataURL 並下載
                 const dataURL = canvas.toDataURL('image/png', 1.0);
                 const link = document.createElement('a');
-                link.download = `施工進度魚骨圖_${new Date().toISOString().slice(0,10)}.png`;
+                link.download = `${currentMachineName}_施工進度魚骨圖_${new Date().toISOString().slice(0,10)}.png`;
                 link.href = dataURL;
                 document.body.appendChild(link);
                 link.click();
@@ -948,7 +980,7 @@
                     <!DOCTYPE html>
                     <html>
                     <head>
-                        <title>工程施工進度魚骨圖</title>
+                        <title>${currentMachineName}工程施工進度魚骨圖</title>
                         <style>
                             @page { size: landscape; margin: 0; }
                             html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; background: #020617; display: flex; align-items: center; justify-content: center; overflow: hidden; }
