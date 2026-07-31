@@ -1,0 +1,59 @@
+<script>
+    let currentSelectedUnit = null;
+
+    // 選擇機組邏輯（僅控制全套管區塊）
+    function selectMachine(unitName, themeColor, btnElem) {
+        currentSelectedUnit = unitName;
+
+        // 1. 清除所有機組卡片的選取狀態
+        document.querySelectorAll('.machine-btn').forEach(btn => {
+            btn.classList.remove(
+                'border-blue-500', 'border-emerald-500', 'border-amber-500', 'border-rose-500',
+                'ring-blue-500/30', 'ring-emerald-500/30', 'ring-amber-500/30', 'ring-rose-500/30',
+                'bg-slate-800', 'ring-2'
+            );
+            btn.classList.add('border-slate-800', 'bg-slate-900/90');
+        });
+
+        // 2. 標記當前選中的機組卡片樣式
+        btnElem.classList.remove('border-slate-800', 'bg-slate-900/90');
+        btnElem.classList.add('bg-slate-800', 'ring-2');
+
+        const badge = document.getElementById('selected-machine-badge');
+        badge.innerText = `已選擇：${unitName}`;
+
+        // 根據顏色設置固定的 Class 名稱，避免動態字串無效
+        if (themeColor === 'blue') {
+            btnElem.classList.add('border-blue-500', 'ring-blue-500/30');
+            badge.className = 'text-xs font-bold px-2.5 py-1 rounded-lg border text-blue-400 bg-blue-500/10 border-blue-500/30';
+        } else if (themeColor === 'emerald') {
+            btnElem.classList.add('border-emerald-500', 'ring-emerald-500/30');
+            badge.className = 'text-xs font-bold px-2.5 py-1 rounded-lg border text-emerald-400 bg-emerald-500/10 border-emerald-500/30';
+        } else if (themeColor === 'amber') {
+            btnElem.classList.add('border-amber-500', 'ring-amber-500/30');
+            badge.className = 'text-xs font-bold px-2.5 py-1 rounded-lg border text-amber-400 bg-amber-500/10 border-amber-500/30';
+        } else if (themeColor === 'rose') {
+            btnElem.classList.add('border-rose-500', 'ring-rose-500/30');
+            badge.className = 'text-xs font-bold px-2.5 py-1 rounded-lg border text-rose-400 bg-rose-500/10 border-rose-500/30';
+        }
+
+        // 3. 更新全套管報表超連結（請確認你的 GitHub 檔案是叫 daily_report.html 還是 dailyreport.html）
+        document.getElementById('btn-daily-report').href = `daily_report.html?unit=${encodeURIComponent(unitName)}`;
+        document.getElementById('btn-fishbone').href = `fishbone.html?unit=${encodeURIComponent(unitName)}`;
+
+        // 4. 解鎖 STEP 2 區域
+        const stepTool = document.getElementById('step-tool');
+        stepTool.classList.remove('opacity-50', 'pointer-events-none');
+        
+        // 5. 平滑捲動至 Step 2
+        stepTool.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // 檢查全套管工具是否已選擇機組
+    function checkMachineSelected(e) {
+        if (!currentSelectedUnit) {
+            e.preventDefault();
+            alert('請先點選 STEP 1 的全套管施工機組（例如 1號機）！');
+        }
+    }
+</script>
