@@ -70,13 +70,13 @@
         <!-- 區塊二：全套管機組專屬區（必須依序選擇） -->
         <section class="space-y-6">
 
-            <!-- 步驟 1：選擇全套管機組 (#1 ~ #5) -->
+            <!-- 步驟 1：選擇全套管機組 (#1 ~ #6) -->
             <div id="step-machine">
                 <div class="flex items-center justify-between mb-3 px-1">
                     <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-screwdriver-wrench"></i> 全套管管制區 - STEP 1. 選擇施工機組
                     </span>
-                    <span class="text-[11px] text-slate-500">共 5 台鑽掘機</span>
+                    <span class="text-[11px] text-slate-500">共 6 台鑽掘機</span>
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -112,12 +112,20 @@
                         <span class="text-sm font-bold text-slate-100">4號機</span>
                     </button>
 
-                    <!-- 5號機 (新增) -->
-                    <button onclick="selectMachine('5號機', 'purple', this)" class="machine-btn machine-card bg-slate-900/90 border-2 border-slate-800 hover:border-purple-500 rounded-2xl p-3.5 flex flex-col items-center justify-center gap-1.5 relative overflow-hidden group col-span-2 sm:col-span-1">
+                    <!-- 5號機 -->
+                    <button onclick="selectMachine('5號機', 'purple', this)" class="machine-btn machine-card bg-slate-900/90 border-2 border-slate-800 hover:border-purple-500 rounded-2xl p-3.5 flex flex-col items-center justify-center gap-1.5 relative overflow-hidden group">
                         <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center text-base font-black group-hover:bg-purple-500 group-hover:text-slate-950 transition-colors">
                             #5
                         </div>
                         <span class="text-sm font-bold text-slate-100">5號機</span>
+                    </button>
+
+                    <!-- 6號機 (新增) -->
+                    <button onclick="selectMachine('6號機', 'cyan', this)" class="machine-btn machine-card bg-slate-900/90 border-2 border-slate-800 hover:border-cyan-500 rounded-2xl p-3.5 flex flex-col items-center justify-center gap-1.5 relative overflow-hidden group">
+                        <div class="w-9 h-9 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center text-base font-black group-hover:bg-cyan-500 group-hover:text-slate-950 transition-colors">
+                            #6
+                        </div>
+                        <span class="text-sm font-bold text-slate-100">6號機</span>
                     </button>
                 </div>
             </div>
@@ -242,8 +250,8 @@
             // 清除所有機組卡片的選取與發光狀態
             document.querySelectorAll('.machine-btn').forEach(btn => {
                 btn.classList.remove(
-                    'border-blue-500', 'border-emerald-500', 'border-amber-500', 'border-rose-500', 'border-purple-500',
-                    'ring-blue-500/30', 'ring-emerald-500/30', 'ring-amber-500/30', 'ring-rose-500/30', 'ring-purple-500/30',
+                    'border-blue-500', 'border-emerald-500', 'border-amber-500', 'border-rose-500', 'border-purple-500', 'border-cyan-500',
+                    'ring-blue-500/30', 'ring-emerald-500/30', 'ring-amber-500/30', 'ring-rose-500/30', 'ring-purple-500/30', 'ring-cyan-500/30',
                     'bg-slate-800', 'ring-2'
                 );
                 btn.classList.add('border-slate-800', 'bg-slate-900/90');
@@ -272,6 +280,9 @@
             } else if (themeColor === 'purple') {
                 btnElem.classList.add('border-purple-500', 'ring-purple-500/30');
                 badge.className = 'text-xs font-bold px-2.5 py-1 rounded-lg border text-purple-400 bg-purple-500/10 border-purple-500/30';
+            } else if (themeColor === 'cyan') {
+                btnElem.classList.add('border-cyan-500', 'ring-cyan-500/30');
+                badge.className = 'text-xs font-bold px-2.5 py-1 rounded-lg border text-cyan-400 bg-cyan-500/10 border-cyan-500/30';
             }
 
             // 解鎖 STEP 2 區域
